@@ -14,7 +14,7 @@ class bgeDraw:
     def draw_shapes(self, shapes):
         for shape in shapes:
             p_shape = int(shape.body.position.x), 600-int(shape.body.position.y)
-            pygame.gfxdraw.filled_circle(screen, p_shape[0], p_shape[1], int(shape.radius), colours["red"])
+            #pygame.gfxdraw.filled_circle(screen, p_shape[0], p_shape[1], int(shape.radius), colours["red"])
             pygame.gfxdraw.aacircle(screen, p_shape[0], p_shape[1], int(shape.radius), colours["red"])
             #  the reason i drew a aa circle and a filled circle is to give the illusion of a smoothed filled circle.
             #  because if you just have the aacircle then its hollow, but if you just have the filled circle, it's
@@ -23,7 +23,7 @@ class bgeDraw:
         for player in players:
             p_player = int(player.body.position.x), 600-int(player.body.position.y)
             pygame.gfxdraw.filled_circle(screen, p_player[0], p_player[1], int(player.radius), colours["green"])
-            pygame.gfxdraw.aacircle(screen, p_player[0], p_player[1], int(player.radius), colours["blue"])
+            #pygame.gfxdraw.aacircle(screen, p_player[0], p_player[1], int(player.radius), colours["blue"])
 
 class bgePhysics:
     def create_world(self, gravity):
@@ -61,15 +61,24 @@ class bgePhysics:
 
     def physics_move(self, direction, player):
         if direction == "right":
-            #player.body.apply_force((player.body.position.x + 10, player.body.position.y))
-            pass
+            player.body.position.x += 5
         elif direction == "left":
-            #player.body.apply_force((player.body.position.x + 10, player.body.position.y), (player.body.position.x + 10, player.body.position.y))
-            pass
+            player.body.position.x -= 5
 
+class bgeMovement:
 
+    def pos_move(self, direction, player):
+        """
+        This function simply moves the player in the specified direction
 
-
+        :param direction: The desired direction of travel
+        :param player: The player object you would like to move
+        :return:
+        """
+        if direction == "right":
+            player.body.position.x += 5
+        elif direction == "left":
+            player.body.position.x -= 5
 
 print("\nWelcome to Bearded Game Engine\n")
 
@@ -82,6 +91,7 @@ pygame.init()
 
 physics = bgePhysics()
 draw = bgeDraw()
+movement = bgeMovement()
 
 screen = pygame.display.set_mode(window_size)
 space = physics.create_world((0.0, -900.0))
@@ -137,16 +147,15 @@ while running:
                 elif event.key == pygame.K_a:
                     move_left = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                pos = pygame.mouse.get_pos() # get the mouse pos
+                pos = pygame.mouse.get_pos()  # get the mouse pos
                 real_pos = pymunk.pygame_util.to_pygame(pos, screen)
                 player = physics.add_player(14, real_pos)
                 player_list.append(player)
 
-
     if move_left:
-        physics.physics_move("left", player_list[0])
+        movement.pos_move("left", player_list[0])
     if move_right:
-        physics.physics_move("right", player_list[0])
+        movement.pos_move("right", player_list[0])
 
     screen.fill(colours["white"])
 
